@@ -1,0 +1,91 @@
+add_pto:
+  name: Add PTO days
+  description: Mark days as paid time off (vacation)
+  fields:
+    date:
+      name: Date
+      description: A single PTO date (YYYY-MM-DD)
+      example: "2026-07-01"
+      selector:
+        date:
+    start_date:
+      name: Start date
+      description: Start of PTO range (YYYY-MM-DD)
+      example: "2026-07-01"
+      selector:
+        date:
+    end_date:
+      name: End date
+      description: End of PTO range (YYYY-MM-DD)
+      example: "2026-07-14"
+      selector:
+        date:
+
+remove_pto:
+  name: Remove PTO days
+  description: Remove PTO marking from days
+  fields:
+    date:
+      name: Date
+      description: A single date to unmark (YYYY-MM-DD)
+      example: "2026-07-01"
+      selector:
+        date:
+    start_date:
+      name: Start date
+      description: Start of range to unmark (YYYY-MM-DD)
+      example: "2026-07-01"
+      selector:
+        date:
+    end_date:
+      name: End date
+      description: End of range to unmark (YYYY-MM-DD)
+      example: "2026-07-14"
+      selector:
+        date:
+
+add_sick_leave:
+  name: Add sick leave days
+  description: Mark days as sick leave
+  fields:
+    date:
+      name: Date
+      description: A single sick leave date (YYYY-MM-DD)
+      example: "2026-03-10"
+      selector:
+        date:
+    start_date:
+      name: Start date
+      description: Start of sick leave range (YYYY-MM-DD)
+      example: "2026-03-10"
+      selector:
+        date:
+    end_date:
+      name: End date
+      description: End of sick leave range (YYYY-MM-DD)
+      example: "2026-03-12"
+      selector:
+        date:
+
+remove_sick_leave:
+  name: Remove sick leave days
+  description: Remove sick leave marking from days
+  fields:
+    date:
+      name: Date
+      description: A single date to unmark (YYYY-MM-DD)
+      example: "2026-03-10"
+      selector:
+        date:
+    start_date:
+      name: Start date
+      description: Start of range to unmark (YYYY-MM-DD)
+      example: "2026-03-10"
+      selector:
+        date:
+    end_date:
+      name: End date
+      description: End of range to unmark (YYYY-MM-DD)
+      example: "2026-03-12"
+      selector:
+        date:

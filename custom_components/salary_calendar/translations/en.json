@@ -1,0 +1,34 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Salary Calendar",
+        "description": "Configure your salary parameters",
+        "data": {
+          "hourly_rate": "Hourly rate (€)",
+          "average_hourly_rate": "Average hourly rate (€) — for holidays, sick leave, PTO",
+          "daily_hours": "Daily work hours",
+          "tax_rate": "Total tax rate (%)",
+          "pto_multiplier": "PTO pay multiplier",
+          "pto_days_per_year": "PTO days per year"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Salary Calendar Settings",
+        "description": "Update your salary parameters",
+        "data": {
+          "hourly_rate": "Hourly rate (€)",
+          "average_hourly_rate": "Average hourly rate (€) — for holidays, sick leave, PTO",
+          "daily_hours": "Daily work hours",
+          "tax_rate": "Total tax rate (%)",
+          "pto_multiplier": "PTO pay multiplier",
+          "pto_days_per_year": "PTO days per year"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "domain": "salary_calendar",
+  "name": "Salary Calendar",
+  "codeowners": ["@jarahkon"],
+  "config_flow": true,
+  "documentation": "https://github.com/jarahkon/ha-salary-calendar",
+  "iot_class": "calculated",
+  "version": "1.0.0",
+  "requirements": []
+}
