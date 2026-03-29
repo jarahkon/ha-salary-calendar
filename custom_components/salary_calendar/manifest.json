@@ -4,6 +4,7 @@
   "codeowners": ["@jarahkon"],
   "config_flow": true,
   "documentation": "https://github.com/jarahkon/ha-salary-calendar",
+  "issue_tracker": "https://github.com/jarahkon/ha-salary-calendar/issues",
   "iot_class": "calculated",
   "version": "1.0.0",
   "requirements": []

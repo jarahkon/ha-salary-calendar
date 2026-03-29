@@ -1,5 +1,9 @@
 # Salary Calendar for Home Assistant
 
+[![Tests](https://github.com/jarahkon/ha-salary-calendar/actions/workflows/tests.yml/badge.svg)](https://github.com/jarahkon/ha-salary-calendar/actions/workflows/tests.yml)
+[![HACS Validation](https://github.com/jarahkon/ha-salary-calendar/actions/workflows/validate-hacs.yml/badge.svg)](https://github.com/jarahkon/ha-salary-calendar/actions/workflows/validate-hacs.yml)
+[![Hassfest Validation](https://github.com/jarahkon/ha-salary-calendar/actions/workflows/validate-hassfest.yml/badge.svg)](https://github.com/jarahkon/ha-salary-calendar/actions/workflows/validate-hassfest.yml)
+
 A custom Home Assistant integration that calculates and displays your monthly salary based on Finnish employment rules — including public holidays, PTO with Saturday counting, sick leave, and configurable tax rates.
 
 ## Features
@@ -110,12 +114,95 @@ The card has four tabs:
 - **PTO pay**: pto_multiplier × average_hourly_rate × daily_hours
 - **PTO Saturdays**: If a Friday is PTO, the following Saturday is auto-counted as PTO (Finnish Vuosilomalaki rule). Saturday PTO pays at the PTO rate.
 - **Public holidays**: Only weekday holidays affect salary. Saturday/Sunday holidays have no impact.
+- **Priority order**: public holiday > sick leave > PTO > PTO Saturday > workday > weekend
 - **Net salary**: gross × (1 − tax_rate/100)
 
 ## Finnish Public Holidays
 
-Automatically calculated per year:
-- New Year's Day, Epiphany, Good Friday, Easter Monday
-- May Day, Ascension Day, Midsummer Eve
-- All Saints' Day, Independence Day
-- Christmas Eve, Christmas Day, St. Stephen's Day
+Automatically calculated per year (14 total):
+
+| Holiday | Date | Type |
+|---|---|---|
+| New Year's Day | January 1 | Fixed |
+| Epiphany | January 6 | Fixed |
+| Good Friday | Easter − 2 | Moveable |
+| Easter Sunday | Varies | Moveable |
+| Easter Monday | Easter + 1 | Moveable |
+| May Day | May 1 | Fixed |
+| Ascension Day | Easter + 39 | Moveable (always Thursday) |
+| Midsummer Eve | Fri between Jun 19–25 | Moveable (always Friday) |
+| Midsummer Day | Sat between Jun 20–26 | Moveable (always Saturday) |
+| All Saints' Day | Sat between Oct 31–Nov 6 | Moveable (always Saturday) |
+| Independence Day | December 6 | Fixed |
+| Christmas Eve | December 24 | Fixed |
+| Christmas Day | December 25 | Fixed |
+| St. Stephen's Day | December 26 | Fixed |
+
+## Project Structure
+
+```
+ha-salary-calendar/
+├── .github/workflows/
+│   ├── tests.yml              # CI — pytest on Python 3.12 & 3.13
+│   ├── validate-hacs.yml      # HACS repository validation
+│   └── validate-hassfest.yml  # HA integration manifest validation
+├── custom_components/salary_calendar/
+│   ├── salary/                # Core engine (no HA dependencies)
+│   │   ├── holidays.py        #   Finnish public holiday computation
+│   │   ├── workdays.py        #   Day classification & PTO Saturday logic
+│   │   └── calculator.py      #   Gross/net salary, YTD, pay date logic
+│   ├── __init__.py            # Integration setup, services, storage
+│   ├── calendar.py            # Calendar entity
+│   ├── config_flow.py         # UI configuration flow
+│   ├── const.py               # Constants and defaults
+│   ├── manifest.json          # HA integration manifest
+│   ├── sensor.py              # 7 sensor entities
+│   ├── services.yaml          # Service definitions
+│   ├── strings.json           # UI strings
+│   └── translations/en.json   # English translations
+├── custom_cards/
+│   └── salary-calendar-card.js  # Lovelace card
+├── tests/
+│   ├── conftest.py            # Test configuration
+│   ├── test_holidays.py       # Holiday calculation tests
+│   ├── test_workdays.py       # Day classification tests
+│   └── test_calculator.py     # Salary math & pay date tests
+├── hacs.json                  # HACS metadata
+├── pyproject.toml             # Project config + dev dependencies
+└── README.md
+```
+
+## Development
+
+### Setup
+
+```bash
+# Clone and set up environment
+git clone https://github.com/jarahkon/ha-salary-calendar.git
+cd ha-salary-calendar
+uv venv
+uv sync --extra dev
+```
+
+### Running Tests
+
+```bash
+uv run pytest tests/ -v
+```
+
+The test suite covers the core salary engine (101 tests):
+- **Holiday computation** — Easter dates, Midsummer, All Saints' Day, all 14 holidays across multiple years
+- **Day classification** — workday counts, PTO/sick/holiday precedence, PTO Saturday logic
+- **Salary calculation** — pay rates, gross/net, tax, accrued salary, YTD, pay date adjustment
+
+### CI Pipelines
+
+| Workflow | Purpose |
+|---|---|
+| **Tests** | Runs pytest on Python 3.12 and 3.13 |
+| **HACS Validation** | Validates repository structure for HACS compatibility |
+| **Hassfest** | Validates `manifest.json` against HA standards |
+
+## License
+
+MIT
