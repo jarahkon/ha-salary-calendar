@@ -28,21 +28,21 @@ class TestPayRates:
         assert b.workday_pay == 20 * 307.50
 
     def test_daily_holiday_pay(self):
-        """37 €/h × 7.5 h = 277.50 €/day."""
+        """41 €/h × 7.5 h = 307.50 €/day."""
         b = calculate_month_salary(DEFAULT_CONFIG, 2026, 1)  # Jan, 2 holidays
-        assert b.public_holiday_pay == 2 * 277.50
+        assert b.public_holiday_pay == 2 * 307.50
 
     def test_daily_pto_pay(self):
-        """1.25 × 37 €/h × 7.5 h = 346.875 €/day."""
+        """1.25 × 41 €/h × 7.5 h = 384.375 €/day."""
         pto = {date(2026, 7, 6)}  # Monday
         b = calculate_month_salary(DEFAULT_CONFIG, 2026, 7, pto_dates=pto)
-        assert b.pto_pay == 1 * 346.875
+        assert b.pto_pay == 1 * 384.375
 
     def test_daily_sick_pay_equals_holiday_pay(self):
         """Sick leave pays the same as a public holiday day."""
         sick = {date(2026, 3, 2)}  # Monday
         b = calculate_month_salary(DEFAULT_CONFIG, 2026, 3, sick_dates=sick)
-        assert b.sick_leave_pay == 277.50
+        assert b.sick_leave_pay == 307.50
 
     def test_pto_saturday_pay_equals_pto_weekday_pay(self):
         """PTO Saturdays pay at the same PTO rate."""
@@ -50,7 +50,7 @@ class TestPayRates:
         pto = {date(2026, 7, 6 + i) for i in range(5)}
         b = calculate_month_salary(DEFAULT_CONFIG, 2026, 7, pto_dates=pto)
         assert b.pto_saturday_days == 1
-        assert b.pto_saturday_pay == 346.875
+        assert b.pto_saturday_pay == 384.375
 
 
 # =============================================================================
@@ -80,9 +80,9 @@ class TestGrossSalary:
 
     def test_january_with_holidays(self):
         """Jan 2026: 20 workdays + 2 holidays.
-        Gross = 20 × 307.50 + 2 × 277.50 = 6150 + 555 = 6705."""
+        Gross = 20 × 307.50 + 2 × 307.50 = 6150 + 615 = 6765."""
         b = calculate_month_salary(DEFAULT_CONFIG, 2026, 1)
-        assert b.gross_salary == 6705.00
+        assert b.gross_salary == 6765.00
 
 
 # =============================================================================
@@ -131,7 +131,7 @@ class TestCustomConfig:
         config = SalaryConfig(pto_multiplier=1.5)
         pto = {date(2026, 7, 6)}
         b = calculate_month_salary(config, 2026, 7, pto_dates=pto)
-        expected = 1.5 * 37.0 * 7.5
+        expected = 1.5 * 41.0 * 7.5
         assert abs(b.pto_pay - expected) < 0.01
 
     def test_custom_daily_hours(self):
