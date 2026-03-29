@@ -16,7 +16,7 @@ class SalaryConfig:
     """Configurable salary parameters."""
 
     hourly_rate: float = 41.0
-    average_hourly_rate: float = 37.0
+    average_hourly_rate: float = 41.0
     daily_hours: float = 7.5
     tax_rate: float = 35.19  # Total tax percentage
     pto_multiplier: float = 1.25
