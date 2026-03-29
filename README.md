@@ -43,7 +43,7 @@ All parameters are configurable via the UI (Settings → Devices & Services → 
 | Parameter | Default | Description |
 |---|---|---|
 | Hourly rate | €41.00 | Normal working day hourly rate |
-| Average hourly rate | €37.00 | Rate for holidays, sick leave, PTO base |
+| Average hourly rate | €41.00 | Rate for holidays, sick leave, PTO base |
 | Daily hours | 7.5 | Working hours per day |
 | Tax rate | 35.19% | Total tax + tax-like deductions |
 | PTO multiplier | 1.25 | Multiplier for PTO daily pay |
@@ -147,6 +147,9 @@ ha-salary-calendar/
 │   ├── validate-hacs.yml      # HACS repository validation
 │   └── validate-hassfest.yml  # HA integration manifest validation
 ├── custom_components/salary_calendar/
+│   ├── brand/                 # Integration branding
+│   │   ├── icon.png           #   Icon for HA integrations list
+│   │   └── logo.png           #   Logo for HA integrations list
 │   ├── salary/                # Core engine (no HA dependencies)
 │   │   ├── holidays.py        #   Finnish public holiday computation
 │   │   ├── workdays.py        #   Day classification & PTO Saturday logic
