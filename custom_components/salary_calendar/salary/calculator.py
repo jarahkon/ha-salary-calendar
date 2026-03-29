@@ -15,12 +15,12 @@ from .workdays import DayType, classify_month, count_by_type, get_workdays_up_to
 class SalaryConfig:
     """Configurable salary parameters."""
 
-    hourly_rate: float = 41.0
-    average_hourly_rate: float = 41.0
-    daily_hours: float = 7.5
-    tax_rate: float = 35.19  # Total tax percentage
-    pto_multiplier: float = 1.25
-    pto_days_per_year: int = 30
+    hourly_rate: float
+    average_hourly_rate: float
+    daily_hours: float
+    tax_rate: float
+    pto_multiplier: float
+    pto_days_per_year: int
 
 
 @dataclass

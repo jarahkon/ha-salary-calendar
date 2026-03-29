@@ -16,7 +16,15 @@ from salary.calculator import (
 # Pay rate calculations
 # =============================================================================
 
-DEFAULT_CONFIG = SalaryConfig()  # Uses all defaults
+# Explicit test config — mirrors const.py defaults but keeps calculator free of hardcoded values
+DEFAULT_CONFIG = SalaryConfig(
+    hourly_rate=41.0,
+    average_hourly_rate=41.0,
+    daily_hours=7.5,
+    tax_rate=35.19,
+    pto_multiplier=1.25,
+    pto_days_per_year=30,
+)
 
 
 class TestPayRates:
@@ -118,24 +126,52 @@ class TestTaxAndNet:
 
 class TestCustomConfig:
     def test_custom_hourly_rate(self):
-        config = SalaryConfig(hourly_rate=50.0)
+        config = SalaryConfig(
+            hourly_rate=50.0,
+            average_hourly_rate=41.0,
+            daily_hours=7.5,
+            tax_rate=35.19,
+            pto_multiplier=1.25,
+            pto_days_per_year=30,
+        )
         b = calculate_month_salary(config, 2026, 2)
         assert b.workday_pay == 20 * (50.0 * 7.5)
 
     def test_custom_tax_rate(self):
-        config = SalaryConfig(tax_rate=30.0)
+        config = SalaryConfig(
+            hourly_rate=41.0,
+            average_hourly_rate=41.0,
+            daily_hours=7.5,
+            tax_rate=30.0,
+            pto_multiplier=1.25,
+            pto_days_per_year=30,
+        )
         b = calculate_month_salary(config, 2026, 2)
         assert abs(b.tax_amount - b.gross_salary * 0.30) < 0.01
 
     def test_custom_pto_multiplier(self):
-        config = SalaryConfig(pto_multiplier=1.5)
+        config = SalaryConfig(
+            hourly_rate=41.0,
+            average_hourly_rate=41.0,
+            daily_hours=7.5,
+            tax_rate=35.19,
+            pto_multiplier=1.5,
+            pto_days_per_year=30,
+        )
         pto = {date(2026, 7, 6)}
         b = calculate_month_salary(config, 2026, 7, pto_dates=pto)
         expected = 1.5 * 41.0 * 7.5
         assert abs(b.pto_pay - expected) < 0.01
 
     def test_custom_daily_hours(self):
-        config = SalaryConfig(daily_hours=8.0)
+        config = SalaryConfig(
+            hourly_rate=41.0,
+            average_hourly_rate=41.0,
+            daily_hours=8.0,
+            tax_rate=35.19,
+            pto_multiplier=1.25,
+            pto_days_per_year=30,
+        )
         b = calculate_month_salary(config, 2026, 2)
         assert b.workday_pay == 20 * (41.0 * 8.0)
 
