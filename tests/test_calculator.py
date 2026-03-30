@@ -201,30 +201,37 @@ class TestAccruedSalary:
 
 class TestYTD:
     def test_ytd_single_month(self):
+        """Payment month 1 (January) pays for December of the previous year."""
         summary = calculate_ytd(DEFAULT_CONFIG, 2026, 1)
         assert len(summary.months) == 1
         assert summary.months[0]["month"] == 1
-        jan = calculate_month_salary(DEFAULT_CONFIG, 2026, 1)
-        assert abs(summary.total_gross - jan.gross_salary) < 0.01
+        assert summary.months[0]["earned_month"] == 12
+        assert summary.months[0]["earned_year"] == 2025
+        dec = calculate_month_salary(DEFAULT_CONFIG, 2025, 12)
+        assert abs(summary.total_gross - dec.gross_salary) < 0.01
 
     def test_ytd_multiple_months(self):
+        """Payment months 1-3 cover Dec 2025 + Jan 2026 + Feb 2026."""
         summary = calculate_ytd(DEFAULT_CONFIG, 2026, 3)
         assert len(summary.months) == 3
-        # Verify total is sum of individual months
-        total = 0
-        for m in range(1, 4):
-            b = calculate_month_salary(DEFAULT_CONFIG, 2026, m)
-            total += b.gross_salary
+        # Verify total is sum of the *earned* months
+        dec = calculate_month_salary(DEFAULT_CONFIG, 2025, 12)
+        jan = calculate_month_salary(DEFAULT_CONFIG, 2026, 1)
+        feb = calculate_month_salary(DEFAULT_CONFIG, 2026, 2)
+        total = dec.gross_salary + jan.gross_salary + feb.gross_salary
         assert abs(summary.total_gross - total) < 0.01
 
     def test_ytd_with_pto(self):
-        pto = {date(2026, 2, 2), date(2026, 2, 3)}
+        """PTO in January is paid in payment month 2 (February)."""
+        pto = {date(2026, 1, 7), date(2026, 1, 8)}  # Wed-Thu, no holidays
         summary = calculate_ytd(DEFAULT_CONFIG, 2026, 2, pto_dates=pto)
-        feb = summary.months[1]
-        assert feb["pto_days"] == 2
+        # Payment month 2 covers January earnings
+        jan_entry = summary.months[1]
+        assert jan_entry["earned_month"] == 1
+        assert jan_entry["pto_days"] == 2
 
     def test_ytd_tax_consistency(self):
-        """Total tax should equal total_gross × tax_rate."""
+        """Total tax should equal total_gross * tax_rate."""
         summary = calculate_ytd(DEFAULT_CONFIG, 2026, 3)
         expected_tax = summary.total_gross * (35.19 / 100)
         assert abs(summary.total_tax - expected_tax) < 0.01
@@ -232,6 +239,25 @@ class TestYTD:
     def test_ytd_net_is_gross_minus_tax(self):
         summary = calculate_ytd(DEFAULT_CONFIG, 2026, 3)
         assert abs(summary.total_net - (summary.total_gross - summary.total_tax)) < 0.01
+
+    def test_ytd_earned_month_fields(self):
+        """Verify earned_month and earned_year are correctly populated."""
+        summary = calculate_ytd(DEFAULT_CONFIG, 2026, 3)
+        expected = [
+            {"month": 1, "earned_month": 12, "earned_year": 2025},
+            {"month": 2, "earned_month": 1, "earned_year": 2026},
+            {"month": 3, "earned_month": 2, "earned_year": 2026},
+        ]
+        for entry, exp in zip(summary.months, expected):
+            assert entry["month"] == exp["month"]
+            assert entry["earned_month"] == exp["earned_month"]
+            assert entry["earned_year"] == exp["earned_year"]
+
+    def test_ytd_previous_year_pto(self):
+        """PTO in December of previous year should appear in payment month 1."""
+        pto = {date(2025, 12, 1), date(2025, 12, 2)}
+        summary = calculate_ytd(DEFAULT_CONFIG, 2026, 1, pto_dates=pto)
+        assert summary.months[0]["pto_days"] == 2
 
 
 # =============================================================================

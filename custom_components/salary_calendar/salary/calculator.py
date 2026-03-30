@@ -170,25 +170,46 @@ def calculate_ytd(
     pto_dates: set[date] | None = None,
     sick_dates: set[date] | None = None,
 ) -> YTDSummary:
-    """Calculate year-to-date salary summary.
+    """Calculate year-to-date salary summary based on payment months.
 
-    Includes all completed months from January through up_to_month (inclusive).
+    Salary is counted by payment date, not earning date, matching Finnish
+    tax rules.  Payment on the 15th of month M covers work done in month
+    M-1.  For January, the salary earned in December of the previous year
+    is included.
+
+    ``up_to_month`` is the last *payment* month to include (1-12).
     """
     summary = YTDSummary()
 
-    for month in range(1, up_to_month + 1):
+    for pay_month in range(1, up_to_month + 1):
+        # Determine which earning month this payment covers
+        if pay_month == 1:
+            earn_month = 12
+            earn_year = year - 1
+        else:
+            earn_month = pay_month - 1
+            earn_year = year
+
         month_pto = {
-            d for d in (pto_dates or set()) if d.month == month and d.year == year
+            d
+            for d in (pto_dates or set())
+            if d.month == earn_month and d.year == earn_year
         }
         month_sick = {
-            d for d in (sick_dates or set()) if d.month == month and d.year == year
+            d
+            for d in (sick_dates or set())
+            if d.month == earn_month and d.year == earn_year
         }
 
-        breakdown = calculate_month_salary(config, year, month, month_pto, month_sick)
+        breakdown = calculate_month_salary(
+            config, earn_year, earn_month, month_pto, month_sick
+        )
 
         summary.months.append(
             {
-                "month": month,
+                "month": pay_month,
+                "earned_month": earn_month,
+                "earned_year": earn_year,
                 "gross": round(breakdown.gross_salary, 2),
                 "net": round(breakdown.net_salary, 2),
                 "workdays": breakdown.workdays,
