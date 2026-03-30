@@ -289,9 +289,17 @@ class YTDGrossSensor(SalaryBaseSensor):
 
     async def async_update(self) -> None:
         today = date.today()
-        # YTD includes completed months only (up to previous month)
-        last_completed_month = today.month - 1
-        if last_completed_month < 1:
+        # Determine how many pay dates have occurred this year.
+        # Pay date is the (adjusted) 15th of each month.
+        pay_date, _, _ = next_pay_date(today)
+        if pay_date.year == today.year and pay_date.month == today.month:
+            # The pay date hasn't happened yet this month
+            last_pay_month = today.month - 1
+        else:
+            # The pay date for this month has already passed
+            last_pay_month = today.month
+
+        if last_pay_month < 1:
             self._attr_native_value = 0
             self._attr_extra_state_attributes = {"months": []}
             return
@@ -299,7 +307,7 @@ class YTDGrossSensor(SalaryBaseSensor):
         summary = calculate_ytd(
             self._config,
             today.year,
-            last_completed_month,
+            last_pay_month,
             self._pto_dates,
             self._sick_dates,
         )
@@ -322,8 +330,13 @@ class YTDNetSensor(SalaryBaseSensor):
 
     async def async_update(self) -> None:
         today = date.today()
-        last_completed_month = today.month - 1
-        if last_completed_month < 1:
+        pay_date, _, _ = next_pay_date(today)
+        if pay_date.year == today.year and pay_date.month == today.month:
+            last_pay_month = today.month - 1
+        else:
+            last_pay_month = today.month
+
+        if last_pay_month < 1:
             self._attr_native_value = 0
             self._attr_extra_state_attributes = {"months": []}
             return
@@ -331,7 +344,7 @@ class YTDNetSensor(SalaryBaseSensor):
         summary = calculate_ytd(
             self._config,
             today.year,
-            last_completed_month,
+            last_pay_month,
             self._pto_dates,
             self._sick_dates,
         )
