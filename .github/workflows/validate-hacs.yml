@@ -1,7 +1,10 @@
 name: HACS Validation
 
-# Disabled while repo is private – re-enable triggers when public
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions: {}
