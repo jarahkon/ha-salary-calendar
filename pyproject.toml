@@ -1,6 +1,6 @@
 [project]
 name = "ha-salary-calendar"
-version = "1.0.0"
+version = "1.0.1"
 description = "Home Assistant custom integration for Finnish salary calculation and PTO tracking"
 requires-python = ">=3.12"
 dependencies = []

@@ -108,7 +108,7 @@ The card has four tabs:
 ## Salary Calculation Rules
 
 - **Pay date**: 15th of each month (previous Friday if weekend)
-- **Pay period**: Previous completed calendar month
+- **Pay period**: Previous completed calendar month (salary earned in month M is paid on the 15th of month M+1, matching Finnish tax rules)
 - **Workday pay**: hourly_rate × daily_hours
 - **Holiday/sick pay**: average_hourly_rate × daily_hours
 - **PTO pay**: pto_multiplier × average_hourly_rate × daily_hours
@@ -193,7 +193,7 @@ uv sync --extra dev
 uv run pytest tests/ -v
 ```
 
-The test suite covers the core salary engine (101 tests):
+The test suite covers the core salary engine (103 tests):
 - **Holiday computation** — Easter dates, Midsummer, All Saints' Day, all 14 holidays across multiple years
 - **Day classification** — workday counts, PTO/sick/holiday precedence, PTO Saturday logic
 - **Salary calculation** — pay rates, gross/net, tax, accrued salary, YTD, pay date adjustment
@@ -208,4 +208,4 @@ The test suite covers the core salary engine (101 tests):
 
 ## License
 
-MIT
+[MIT](LICENSE)
